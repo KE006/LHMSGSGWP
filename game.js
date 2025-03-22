@@ -4,7 +4,7 @@ const ctx = canvas.getContext('2d');
 const startPanel = document.getElementById('startPanel');
 const startButton = document.getElementById('startButton');
 
-// Set canvas size
+// Set canvas size by Henry
 canvas.width = 800;
 canvas.height = 600;
 
