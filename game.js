@@ -23,7 +23,7 @@ let gamesPlayed = 0;
 let hasPaid = false;
 
 // Payment link
-const PAYMENT_LINK = 'https://buy.stripe.com/6oEaGl7rdgZIa8E7st';
+const PAYMENT_LINK = 'https://buy.stripe.com/test_bIYcOydmC3rb54AdQQ';
 
 // Game objects
 const player = {
@@ -85,10 +85,42 @@ function checkPaymentStatus() {
 }
 
 function handlePayment() {
+    // Open payment link in a new tab
     window.open(PAYMENT_LINK, '_blank');
-    // After successful payment, you would typically verify this server-side
+    
+    // Show payment confirmation message
+    const paymentMessage = document.createElement('div');
+    paymentMessage.style.position = 'absolute';
+    paymentMessage.style.top = '50%';
+    paymentMessage.style.left = '50%';
+    paymentMessage.style.transform = 'translate(-50%, -50%)';
+    paymentMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.95)';
+    paymentMessage.style.padding = '2rem';
+    paymentMessage.style.borderRadius = '10px';
+    paymentMessage.style.textAlign = 'center';
+    paymentMessage.style.color = '#fff';
+    paymentMessage.style.border = '2px solid #00ff00';
+    paymentMessage.style.zIndex = '1000';
+    paymentMessage.style.boxShadow = '0 0 20px rgba(0, 255, 0, 0.5)';
+    
+    paymentMessage.innerHTML = `
+        <h2 style="color: #00ff00; margin-bottom: 1rem; font-size: 2rem;">Payment Instructions</h2>
+        <p style="margin-bottom: 1rem; font-size: 1.2rem;">1. Complete your payment in the new tab</p>
+        <p style="margin-bottom: 1rem; font-size: 1.2rem;">2. After payment, click "I've Paid"</p>
+        <p style="margin-bottom: 1.5rem; font-size: 1.2rem;">3. You'll be able to play unlimited games!</p>
+        <button onclick="confirmPayment()" style="background-color: #00ff00; color: #000; border: none; padding: 1rem 2rem; font-size: 1.2rem; border-radius: 5px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);">I've Paid</button>
+    `;
+    
+    document.getElementById('gameContainer').appendChild(paymentMessage);
+}
+
+function confirmPayment() {
     localStorage.setItem('hasPaid', 'true');
     hasPaid = true;
+    // Remove payment message
+    const paymentMessage = document.querySelector('#gameContainer > div:last-child');
+    if (paymentMessage) paymentMessage.remove();
+    // Start the game
     startPanel.style.display = 'none';
     gameStarted = true;
     resetGame();
@@ -107,18 +139,21 @@ startButton.addEventListener('click', () => {
         paymentMessage.style.top = '50%';
         paymentMessage.style.left = '50%';
         paymentMessage.style.transform = 'translate(-50%, -50%)';
-        paymentMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
+        paymentMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.95)';
         paymentMessage.style.padding = '2rem';
         paymentMessage.style.borderRadius = '10px';
         paymentMessage.style.textAlign = 'center';
         paymentMessage.style.color = '#fff';
         paymentMessage.style.border = '2px solid #00ff00';
         paymentMessage.style.zIndex = '1000';
+        paymentMessage.style.boxShadow = '0 0 20px rgba(0, 255, 0, 0.5)';
         
         paymentMessage.innerHTML = `
-            <h2 style="color: #00ff00; margin-bottom: 1rem;">Payment Required</h2>
-            <p style="margin-bottom: 1.5rem;">You've played your free game! Pay to continue playing.</p>
-            <button onclick="handlePayment()" style="background-color: #00ff00; color: #000; border: none; padding: 1rem 2rem; font-size: 1.2rem; border-radius: 5px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Pay Now</button>
+            <h2 style="color: #00ff00; margin-bottom: 1rem; font-size: 2rem;">Payment Required</h2>
+            <p style="margin-bottom: 1rem; font-size: 1.2rem;">You've played your free game!</p>
+            <p style="margin-bottom: 1rem; font-size: 1.2rem;">Pay $4.99 to continue playing unlimited games</p>
+            <p style="margin-bottom: 1.5rem; font-size: 1.2rem;">Click the button below to pay</p>
+            <button onclick="handlePayment()" style="background-color: #00ff00; color: #000; border: none; padding: 1rem 2rem; font-size: 1.2rem; border-radius: 5px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);">Pay Now</button>
         `;
         
         document.getElementById('gameContainer').appendChild(paymentMessage);
@@ -294,18 +329,48 @@ function update() {
 
     if (gameOver) {
         gamesPlayed++;
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        // Draw semi-transparent black overlay
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw game over text
         ctx.fillStyle = '#fff';
         ctx.font = 'bold 48px Arial';
-        ctx.fillText('Game Over!', canvas.width / 2 - 100, canvas.height / 2);
+        ctx.fillText('Game Over!', canvas.width / 2 - 100, canvas.height / 2 - 100);
         ctx.font = 'bold 24px Arial';
-        ctx.fillText(`Final Score: ${score}`, canvas.width / 2 - 70, canvas.height / 2 + 40);
-        ctx.fillText(`Waves Completed: ${wave - 1}/${MAX_WAVES}`, canvas.width / 2 - 70, canvas.height / 2 + 80);
+        ctx.fillText(`Final Score: ${score}`, canvas.width / 2 - 70, canvas.height / 2 - 40);
+        ctx.fillText(`Waves Completed: ${wave - 1}/${MAX_WAVES}`, canvas.width / 2 - 70, canvas.height / 2);
         
+        // Show payment message if this is the first game
         if (gamesPlayed === 1) {
-            ctx.fillText('First game completed!', canvas.width / 2 - 100, canvas.height / 2 + 120);
-            ctx.fillText('Next game requires payment', canvas.width / 2 - 120, canvas.height / 2 + 160);
+            ctx.fillStyle = '#00ff00';
+            ctx.font = 'bold 32px Arial';
+            ctx.fillText('First game completed!', canvas.width / 2 - 150, canvas.height / 2 + 60);
+            ctx.fillText('Next game requires payment', canvas.width / 2 - 180, canvas.height / 2 + 100);
+            
+            // Create and show payment button
+            const paymentButton = document.createElement('button');
+            paymentButton.textContent = 'Pay Now ($4.99)';
+            paymentButton.style.position = 'absolute';
+            paymentButton.style.left = '50%';
+            paymentButton.style.top = '60%';
+            paymentButton.style.transform = 'translate(-50%, -50%)';
+            paymentButton.style.padding = '1rem 2rem';
+            paymentButton.style.fontSize = '24px';
+            paymentButton.style.backgroundColor = '#00ff00';
+            paymentButton.style.color = '#000';
+            paymentButton.style.border = 'none';
+            paymentButton.style.borderRadius = '5px';
+            paymentButton.style.cursor = 'pointer';
+            paymentButton.style.boxShadow = '0 0 20px rgba(0, 255, 0, 0.5)';
+            paymentButton.onclick = handlePayment;
+            
+            // Remove any existing payment button
+            const existingButton = document.querySelector('#gameContainer button');
+            if (existingButton) existingButton.remove();
+            
+            // Add the new payment button
+            document.getElementById('gameContainer').appendChild(paymentButton);
         }
         
         startPanel.style.display = 'block';
