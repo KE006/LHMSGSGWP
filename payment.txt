@@ -1,0 +1,7 @@
+Link: 
+https://buy.stripe.com/6oEaGl7rdgZIa8E7st
+
+
+Prompt: 
+
+This is my stripe payment link. Please integrate it to my game.

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Defenders</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #000;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(45deg, #000000, #1a1a1a);
+        }
+        #gameContainer {
+            position: relative;
+        }
+        canvas {
+            border: 2px solid #333;
+            background-color: #000;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+        }
+        #startPanel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 2.5rem;
+            border-radius: 15px;
+            text-align: center;
+            color: #fff;
+            border: 2px solid #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            min-width: 400px;
+            backdrop-filter: blur(10px);
+        }
+        #startPanel h1 {
+            color: #00ff00;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+        }
+        #startPanel p {
+            margin: 1rem 0;
+            line-height: 1.6;
+            color: #ccc;
+        }
+        .game-info {
+            background-color: rgba(0, 255, 0, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border: 1px solid rgba(0, 255, 0, 0.2);
+        }
+        .game-info h2 {
+            color: #00ff00;
+            margin: 0 0 0.5rem 0;
+            font-size: 1.2rem;
+        }
+        .game-info ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: left;
+        }
+        .game-info li {
+            margin: 0.5rem 0;
+            color: #ccc;
+        }
+        .game-info li::before {
+            content: "•";
+            color: #00ff00;
+            margin-right: 0.5rem;
+        }
+        button {
+            background-color: #00ff00;
+            color: #000;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        button:hover {
+            background-color: #00cc00;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        .control-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: rgba(0, 255, 0, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            border: 1px solid rgba(0, 255, 0, 0.2);
+        }
+        .key {
+            background-color: #333;
+            padding: 0.3rem 0.6rem;
+            border-radius: 3px;
+            font-family: monospace;
+            color: #00ff00;
+        }
+        .difficulty-selector {
+            margin: 1rem 0;
+        }
+        .difficulty-selector select {
+            background-color: #333;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 0.5rem;
+            border-radius: 5px;
+            margin-left: 0.5rem;
+            cursor: pointer;
+        }
+        .high-scores {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: rgba(0, 255, 0, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 0, 0.2);
+        }
+        .high-scores h2 {
+            color: #00ff00;
+            margin: 0 0 0.5rem 0;
+            font-size: 1.2rem;
+        }
+        .high-scores ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .high-scores li {
+            color: #ccc;
+            margin: 0.3rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+        <div id="startPanel">
+            <h1>Space Defenders</h1>
+            <p>Defend the galaxy from invading forces!</p>
+            
+            <div class="game-info">
+                <h2>Game Features</h2>
+                <ul>
+                    <li>Wave-based enemy attacks</li>
+                    <li>Special wave enemies worth more points</li>
+                    <li>Particle effects and visual feedback</li>
+                    <li>Progressive difficulty</li>
+                </ul>
+            </div>
+
+            <div class="difficulty-selector">
+                <label for="difficulty">Difficulty:</label>
+                <select id="difficulty">
+                    <option value="normal">Normal</option>
+                    <option value="hard">Hard</option>
+                    <option value="insane">Insane</option>
+                </select>
+            </div>
+
+            <div class="controls">
+                <div class="control-item">
+                    <span class="key">←</span>
+                    <span>Move Left</span>
+                </div>
+                <div class="control-item">
+                    <span class="key">→</span>
+                    <span>Move Right</span>
+                </div>
+                <div class="control-item">
+                    <span class="key">Space</span>
+                    <span>Shoot</span>
+                </div>
+            </div>
+
+            <div class="high-scores">
+                <h2>High Scores</h2>
+                <ul id="highScores">
+                    <li>1. 1000 - Master Defender</li>
+                    <li>2. 800 - Space Warrior</li>
+                    <li>3. 600 - Novice Pilot</li>
+                </ul>
+            </div>
+
+            <button id="startButton">Start Game</button>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html> 
