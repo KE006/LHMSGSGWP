@@ -22,7 +22,7 @@ let waveTimeRemaining = 0;
 let gamesPlayed = 0;
 let hasPaid = false;
 
-// Payment link
+// Payment link via OmniTek
 const PAYMENT_LINK = 'https://buy.stripe.com/test_bIYcOydmC3rb54AdQQ';
 
 // Game objects
